@@ -10,6 +10,33 @@
  * - RESTful API 를 사용
  */
 
+// test는 맞는지만 비교 exec는 구체적으로 정보를 줌
+const http = require('http')
+
+/**
+ * @typedef Post
+ * @property {string} id
+ * @property {string} title
+ * @property {string} content
+ */
+// 포스트 타입 정의
+// 잘못된 값을 넣어주거나 없는 요소가 있으면 오류를 표시해줌
+/**@type {Post[]}*/ // 배열 형태로 저장
+
+const posts = [
+  {
+    id: 'my_first_post',
+    title: 'My first post',
+    content: 'Hello!',
+  },
+  {
+    id: 'my_second_post', // 비어있는 요소가 있어도 일단 실행 됨 -> type 설정
+    title: '나의 두번째 포스트',
+    content: 'Second Post!',
+  },
+]
+// 데이터 구조
+
 /**
  * post
  *
@@ -17,25 +44,55 @@
  * GET / posts/Lid
  * POST /posts
  */
-
-const http = require('http')
 const server = http.createServer((req, res) => {
-  const POSTS_ID_REGEX = /^\/posts\/([a-zA-Z0-9_]+)$/ // 자바스크립트의 정규식 - 패턴을 정의하는 것
+  const POSTS_ID_REGEX = /^\/posts\/([a-zA-Z0-9-_]+)$/ // 자바스크립트의 정규식 - 패턴을 정의하는 것
   const postIdRegexResult =
     (req.url && POSTS_ID_REGEX.exec(req.url)) || undefined
   if (req.url === '/posts' && req.method === 'GET') {
-    req.statusCode = 200
-    res.end('List of posts')
-  } else if (req.url && POSTS_ID_REGEX.test(req.url)) {
-    const regexResult = POSTS_ID_REGEX.exec(req.url) // exec는 구체적으로 정보를 줌
-    if (regexResult) {
-      // id를 출력해보는 구문
-      const postId = regexResult[1]
-      console.log(postId)
+    // 포스트의 목록을 가져오는 api
+    const result = {
+      posts: posts.map((post) => ({
+        id: post.id,
+        title: post.title,
+      })),
+      totalCount: posts.length,
     }
     req.statusCode = 200
-    res.end('Some content of the post')
+    res.setHeader('Content-Type', 'application/json; charset=utf-8')
+    res.end(JSON.stringify(result))
+  } else if (postIdRegexResult && req.method === 'GET') {
+    // get post/:id 인 경우
+    const postId = postIdRegexResult[1] //구체적인 정보를 가져오는 api
+
+    const post = posts.find((_post) => _post.id === postId)
+
+    if (post) {
+      res.statusCode = 200
+      res.setHeader('Content-Type', 'application/json; charset=utf-8')
+      res.end(JSON.stringify(post))
+    } else {
+      res.statusCode = 404
+      res.end('Post not found')
+    }
+    console.log(`postId: ${postId}`)
+    res.statusCode = 200
+    res.end('Reading a post')
   } else if (req.url === '/posts' && req.method === 'POST') {
+    req.setEncoding('utf-8')
+    req.on('data', (data) => {
+      /**
+       * @typedef CreatePostBody
+       * @property {string} title
+       * @property {string} content
+       *  */
+      const body = JSON.parse(data) // 받은 데이터 파싱
+      console.log(body)
+      posts.push({
+        id: body.title.toLowerCase().replace(/\s/g, '_'), //입력받은 데이터 푸시 id 값은 title에서 공백을 _로 대체한 것
+        title: body.title,
+        content: body.content,
+      })
+    })
     req.statusCode = 200
     res.end('Creating post')
   } else {
@@ -54,3 +111,4 @@ server.listen(PORT, () => {
 // http localhost:4000 로 확인 가능
 
 // 매번 서버를 다시 켜는 것이 번거롭기 때문에 nodemon 사용 npm run nodemon src/main8.js
+// http localhost:4000/posts title=foo content=bar --print hHbB 입력한 정보를 출력해볼 수 있음
