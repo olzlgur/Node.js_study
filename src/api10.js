@@ -90,9 +90,7 @@ const routes = [
 
       const title = body.title
 
-      posts.push({
-        id: body.title,
-      })
+      posts.push({})
 
       return {
         statusCode: 200,
