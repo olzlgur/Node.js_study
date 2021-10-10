@@ -55,10 +55,10 @@ const server = http.createServer((req, res) => {
         id: post.id,
         title: post.title,
       })),
-      totalCount: posts.length,
+      totalCount: posts.length, // 글의 갯수
     }
     req.statusCode = 200
-    res.setHeader('Content-Type', 'application/json; charset=utf-8')
+    res.setHeader('Content-Type', 'application/json; charset=utf-8') // json으로 content type을 지정 encoding은 utf-8으로 지정
     res.end(JSON.stringify(result))
   } else if (postIdRegexResult && req.method === 'GET') {
     // get post/:id 인 경우
@@ -67,27 +67,29 @@ const server = http.createServer((req, res) => {
     const post = posts.find((_post) => _post.id === postId)
 
     if (post) {
+      // 해당 id의 포스트를 찾았을 경우
       res.statusCode = 200
       res.setHeader('Content-Type', 'application/json; charset=utf-8')
       res.end(JSON.stringify(post))
     } else {
+      //포스트를 못찾았을 경우
       res.statusCode = 404
       res.end('Post not found')
     }
-    console.log(`postId: ${postId}`)
-    res.statusCode = 200
-    res.end('Reading a post')
   } else if (req.url === '/posts' && req.method === 'POST') {
-    req.setEncoding('utf-8')
+    req.setEncoding('utf-8') // encoding은 utf-8로 지정
     req.on('data', (data) => {
       /**
        * @typedef CreatePostBody
        * @property {string} title
        * @property {string} content
        *  */
+
+      /** @type {CreatePostBody} */ //타입 설정
       const body = JSON.parse(data) // 받은 데이터 파싱
       console.log(body)
       posts.push({
+        // 데이터 푸시
         id: body.title.toLowerCase().replace(/\s/g, '_'), //입력받은 데이터 푸시 id 값은 title에서 공백을 _로 대체한 것
         title: body.title,
         content: body.content,
@@ -111,4 +113,4 @@ server.listen(PORT, () => {
 // http localhost:4000 로 확인 가능
 
 // 매번 서버를 다시 켜는 것이 번거롭기 때문에 nodemon 사용 npm run nodemon src/main8.js
-// http localhost:4000/posts title=foo content=bar --print hHbB 입력한 정보를 출력해볼 수 있음
+// http POST localhost:4000/posts title=foo content=bar --print hHbB 입력한 정보를 출력해볼 수 있음

@@ -25,7 +25,7 @@ const { rejects } = require('assert')
 const http = require('http')
 const { endianness } = require('os')
 
-const { routes } = require('./api10')
+const { routes } = require('./api10') // 라우트를 불러옴
 const server = http.createServer((req, res) => {
   async function main() {
     const route = routes.find(
@@ -51,17 +51,19 @@ const server = http.createServer((req, res) => {
 
     /** @type {Object.<string, *> | undefined}*/
     const reqBody =
-      req.headers['content-type'] === 'aplication/json' &&
-      (await new Promise((resolve, reject) => {
-        req.setEncoding('utf-8')
-        req.on('data', (data) => {
-          try {
-            resolve(JSON.parse(data))
-          } catch {
-            reject(new Error('Ill-fromed json'))
-          }
-        })
-      }))
+      (req.headers['content-type'] === 'aplication/json' &&
+        (await new Promise((resolve, reject) => {
+          req.setEncoding('utf-8')
+          req.on('data', (data) => {
+            try {
+              // JSON 포맷을 따르지 않을수도 있으므로 try catch문 사용
+              resolve(JSON.parse(data))
+            } catch {
+              reject(new Error('Ill-fromed json'))
+            }
+          })
+        }))) ||
+      undefined
 
     const result = await route.callback(regexResult, reqBody)
     res.statusCode = result.statusCode
