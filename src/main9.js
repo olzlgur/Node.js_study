@@ -38,7 +38,7 @@ const server = http.createServer((req, res) => {
 
     if (!req.url || !route) {
       res.statusCode = 404
-      res.end('Not found.')
+      res.end('Not found')
       return
     }
     const regexResult = route.url.exec(req.url)
