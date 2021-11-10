@@ -1,0 +1,55 @@
+npm - node packacge manager
+
+npm CLI이자 Registry이다. 
+패키지를 공개적으로 올려두는 저장소중 가장 핵심적인 저장소가 npm
+npm에 접근해서 패키지를 받아올 수 있는 도구가 npm CLI 이다.
+
+npm install decamelize 실행
+
+packacge-lock.json 파일이 생김
+
+packacge.json에 표시되는 버전은 대략적인 버전 
+앞의 ^ 기호 때문임
+
+패키지 버전이 업데이트 되거나 서로 참조되는 일이 잦았기 때문에 정확한 버전을 지정하는 것 보다는 자연스럽게 업데이트 된 것을 따라가는 것이 
+좋기 때문에 ^ 기호를 사용해서 대략적인 버전을 표시한다고 함(?)
+
+packacge-lock.json 에는 정확한 버전이 표시됨
+협업시에는 packacge-lock.json 을 잘 업데이트 해줘야한다.
+버전에 큰 차이가 없더라도 문제가 생길 수 있기 때문에 정확히 같은 버전을 사용해야함
+
+packacge-lock.json에는 설치된 패키지들의 실제 정보가 들어감
+
+
+
+-------------------------------------------
+웹에서는 인덱스라는 파일은 디렉토리의 내용물을 보여주는 역할을 함.
+
+
+-------------------------------------------
+npm install --save-dev eslint
+
+package.json에 devDependecies 는 개발환경에서 필요한 것들 dependencies는 실제로 실행되는 환경에서 필요한 것
+
+npm install --production 을 실행하면 필요한 dependencies 만 설치하도록 해줌
+
+
+-------------------------------------------
+숫자 세개로 나눠서 표시하는 것을 semantci versioning 이라고 한다
+major.minor.patch 를 의미함
+
+major - 이전 버전과 맞지않는 새로운 버전 
+minor - 새로운 기능만 추가 된 경우
+patch - minor에 버그픽스 포함
+
+npm uninstall 을 통해 설치해놓은 것 삭제 가능
+
+npm 홈페이지에서 패키지에 대한 자세한 내용을 확인해 볼 수 있음
+
+---------------------------------------------
+
+npm install decamelize @3.1.0  <- 이런 방식으로 예전 버전을 사용할 수 있음
+
+npm update decamelize <- 현재 버전에서 가장 최신 버전으로 올려줌 major 버전은 그대로
+
+packacge.json에 버전이 ~로 되어있으면 update 했을 때 patch 버전만 최신 버전으로 올려줌
