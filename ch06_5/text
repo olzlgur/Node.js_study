@@ -1,0 +1,5 @@
+Buffer 와 Stream
+
+node.js 공식 문서를 보는 것이 좋다고 하네요
+
+Buffer는 고정된 길이의 
